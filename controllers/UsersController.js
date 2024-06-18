@@ -1,4 +1,5 @@
 import sha1 from 'sha1';
+
 import dbClient from '../utils/db';
 
 class Usercontroller {
@@ -18,7 +19,9 @@ class Usercontroller {
         res.status(400).send({ error: 'Already exist' });
       } else {
         collection.insertOne({ email, password: hashpass });
-        const newUser = await collection.findOne({ email });
+        const newUser = await collection.findOne(
+          { email }, { projection: { email: 1 } },
+        );
         res.status(201).send({ id: newUser._id, email: newUser.email });
       }
     } catch (error) {
