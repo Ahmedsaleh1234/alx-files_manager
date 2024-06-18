@@ -19,11 +19,12 @@ class Usercontroller {
       } else {
         collection.insertOne({ email, password: hashpass });
         const newUser = await collection.findOne({ email });
-        res.status(201).send({ id: newUser._id, email: newUser.email });
+        return res.status(201).send({ id: newUser._id, email: newUser.email });
       }
     } catch (error) {
       console.log(error);
     }
+    return null;
   }
 }
 export default Usercontroller;
