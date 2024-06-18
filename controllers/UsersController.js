@@ -3,7 +3,7 @@ import dbClient from '../utils/db';
 
 class Usercontroller {
   static async postNew(req, res) {
-    const { email, password } = req.body;
+    const { email, password } = req.body || null;
     if (!email) {
       res.status(400).send({ error: 'Missing email' });
     }
