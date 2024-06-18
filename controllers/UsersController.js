@@ -2,29 +2,34 @@ import sha1 from 'sha1';
 import dbClient from '../utils/db';
 
 class Usercontroller {
-  static async postNew(req, res) {
-    const { email, password } = req.body;
+  static async postNew(request, response) {
+    const { email, password } = request.body;
     if (!email) {
-      res.status(400).send({ error: 'Missing email' });
+      response.status(400).json({ error: 'Missing email' });
     }
     if (!password) {
-      res.status(400).send({ error: 'Missing password' });
+      response.status(400).json({ error: 'Missing password' });
     }
-    const hashpass = sha1(password);
+
+    const hashPwd = sha1(password);
+
     try {
-      const query = await dbClient.db.collection('users').findOne({ email });
       const collection = dbClient.db.collection('users');
-      if (query) {
-        res.status(400).send({ error: 'Already exist' });
+      const user1 = await collection.findOne({ email });
+
+      if (user1) {
+        response.status(400).json({ error: 'Already exist' });
       } else {
-        collection.insertOne({ email, password: hashpass });
-        const newUser = await collection.findOne({ email });
-        return res.status(201).send({ id: newUser._id, email: newUser.email });
+        collection.insertOne({ email, password: hashPwd });
+        const newUser = await collection.findOne(
+          { email }, { projection: { email: 1 } },
+        );
+        response.status(201).json({ id: newUser._id, email: newUser.email });
       }
     } catch (error) {
       console.log(error);
+      response.status(500).json({ error: 'Server error' });
     }
-    return null;
   }
 }
 export default Usercontroller;
