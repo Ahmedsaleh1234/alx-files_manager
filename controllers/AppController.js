@@ -6,7 +6,7 @@ class Appcontoller {
     try {
       const redis = redisClient.isAlive();
       const db = dbClient.isAlive();
-      res.status(200).send({ redis, db });
+      res.status(200).send({ redis, db });z
     } catch (error) {
       console.log(error);
     }
